@@ -2,8 +2,8 @@ name: OmniStream Video Engine
 
 # This tells GitHub to wake up when it receives the webhook from your Render API
 on:
-  repository_dispatch:
-    types: [generate_video]
+repository_dispatch:
+types: [generate_omnistream_video]
 
 jobs:
   render-video:
