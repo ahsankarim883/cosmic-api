@@ -1,0 +1,34 @@
+name: OmniStream Video Engine
+
+# This tells GitHub to wake up when it receives the webhook from your Render API
+on:
+  repository_dispatch:
+    types: [generate_video]
+
+jobs:
+  render-video:
+    runs-on: ubuntu-latest # GitHub gives us a free Linux server
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # Here we pass the variables from your React frontend -> Render API -> GitHub
+      - name: Run OmniStream Heavy Engine
+        run: |
+          python video_engine.py \
+            --topic "${{ github.event.client_payload.topic }}" \
+            --style "${{ github.event.client_payload.style }}" \
+            --email "${{ github.event.client_payload.client_email }}"
+
+      # This grabs the generated file and saves it so you can download it
+      - name: Upload Final Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: omnistream-delivery-${{ github.run_id }}
+          path: output/
